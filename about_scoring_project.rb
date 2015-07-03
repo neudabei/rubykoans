@@ -6,12 +6,12 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 #
 # A greed roll is scored as follows:
 #
-# * A set of three ones is 1000 points
+# * A set of three ones is 1000 points DONE
 #
 # * A set of three numbers (other than ones) is worth 100 times the
 #   number. (e.g. three fives is 500 points).
 #
-# * A one (that is not part of a set of three) is worth 100 points.
+# * A one (that is not part of a set of three) is worth 100 points. DONE
 #
 # * A five (that is not part of a set of three) is worth 50 points.
 #
@@ -29,8 +29,40 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 #
 # Your goal is to write the score method.
 
-def score(dice)
+def score(dice) 
+  sum = 0 
   # You need to write this method
+
+  #check for 1
+  results1 = dice.select {|num| num <=1 }
+    if results1.size == 3
+      sum += 1000
+    elsif results1.size == 4
+      sum += 1000 + 100
+    elsif results1.size == 5
+      sum += 1000 + 200
+    elsif results1.size < 3
+      sum += results1.size * 100
+    end
+
+  #check for: A set of three numbers (other than ones) is worth 100 times the
+  #number. (e.g. three fives is 500 points).
+  triple_value = dice.detect{|num| dice.count(num) == 3}
+  sum += triple_value * 100 unless (triple_value == nil) || (triple_value == 1)  # es sei denn tripe_value ist 1
+
+  quadruple_value = dice.detect{|num| dice.count(num) == 4}
+  sum += quadruple_value * 100 unless (quadruple_value == nil) || (quadruple_value == 1)  # es sei denn tripe_value ist 1
+
+  # Check for 5: A five (that is not part of a set of three) is worth 50 points.
+  if dice.include?(5) && unless (triple_value == 5) || (quadruple_value == 5)
+      sum += 50 * (dice.count(5))
+    end
+  elsif dice.include?(5) && (quadruple_value == 5)
+    sum += 50
+  end
+  
+  sum
+    
 end
 
 class AboutScoringProject < Neo::Koan
